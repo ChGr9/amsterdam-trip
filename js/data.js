@@ -28,9 +28,9 @@ const TRIP = {
   subtitle: "Family trip — the plan, the tickets, the food. All in one place.",
 
   hotel: {
-    name: "The Social Hub Amsterdam",
-    location: "The Social Hub Amsterdam",
-    url: "https://www.thesocialhub.co/amsterdam/"
+    name: "The Social Hub Amsterdam City",
+    location: "The Social Hub Amsterdam City, Wibautstraat 129, Amsterdam",
+    url: "https://www.thesocialhub.co/amsterdam-city/"
   },
 
   days: [
@@ -46,10 +46,10 @@ const TRIP = {
         { time: "16:40", title: "Land at Schiphol", cat: "travel",
           desc: "Direct train to Amsterdam Centraal every ~10 min (17 min ride). Tap in/out with any contactless bank card (OVpay).",
           location: "Schiphol Airport" },
-        { time: "18:00", title: "Check in — The Social Hub", cat: "travel", booked: true,
-          desc: "Home for the whole week.",
-          location: "The Social Hub Amsterdam",
-          url: "https://www.thesocialhub.co/amsterdam/" },
+        { time: "18:00", title: "Check in — The Social Hub City", cat: "travel", booked: true,
+          desc: "Home for the whole week. From Centraal: metro 51/53/54 to Wibautstraat (3 stops), the hotel is right by the station.",
+          location: "The Social Hub Amsterdam City, Wibautstraat 129, Amsterdam",
+          url: "https://www.thesocialhub.co/amsterdam-city/" },
         { time: "19:30", title: "Dinner near the hotel", cat: "food",
           desc: "Keep it easy after the flight — see the Restaurants section for ideas." }
       ]
@@ -173,10 +173,10 @@ const TRIP = {
       desc: "Pack up, one last stroopwafel, and home. Times local again: Dutch → Cyprus.",
       items: [
         { time: "09:00", title: "Pack & check out", cat: "travel",
-          location: "The Social Hub Amsterdam" },
+          location: "The Social Hub Amsterdam City, Wibautstraat 129, Amsterdam" },
         { time: "10:30", title: "Train to Schiphol", cat: "travel",
-          desc: "Aim to be at Schiphol by ~11:15 — security queues can be long in August.",
-          location: "Amsterdam Centraal" },
+          desc: "Direct trains to Schiphol run from Amstel station (5 min walk from the hotel) — no need to go back to Centraal. Aim to be at Schiphol by ~11:15.",
+          location: "Station Amsterdam Amstel" },
         { time: "13:35", title: "Flight: Amsterdam → Larnaca", cat: "travel", booked: true,
           desc: "Departs 13:35 Dutch time, lands 18:45 Cyprus time.",
           location: "Schiphol Airport" }

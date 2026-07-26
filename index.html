@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#c2410c">
+  <title>Amsterdam Family Trip</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌷</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker" id="trip-dates"></div>
+      <h1 id="trip-title">Amsterdam</h1>
+      <p class="hero-sub" id="trip-subtitle"></p>
+      <div class="hero-hotel" id="hotel-card"></div>
+    </div>
+    <div class="hero-wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,30 C240,60 480,0 720,20 C960,40 1200,10 1440,30 L1440,60 L0,60 Z" fill="var(--bg)"/></svg>
+    </div>
+  </header>
+
+  <nav class="section-nav" id="section-nav">
+    <a href="#schedule" class="active" data-section="schedule">📅 Schedule</a>
+    <a href="#freetime" data-section="freetime">✨ Free time</a>
+    <a href="#restaurants" data-section="restaurants">🍽️ Food</a>
+    <a href="#info" data-section="info">ℹ️ Info</a>
+  </nav>
+
+  <main>
+    <section id="schedule">
+      <div class="day-tabs" id="day-tabs" role="tablist" aria-label="Trip days"></div>
+      <div id="day-content"></div>
+    </section>
+
+    <section id="freetime">
+      <h2 class="section-title"><span>✨</span> Free time ideas</h2>
+      <p class="section-lede">Got a gap in the schedule? Pick something from here.</p>
+      <div class="card-grid" id="freetime-grid"></div>
+    </section>
+
+    <section id="restaurants">
+      <h2 class="section-title"><span>🍽️</span> Restaurants &amp; snacks</h2>
+      <p class="section-lede">Tried-and-tested places to eat, sorted by area.</p>
+      <div class="filter-row" id="food-filters"></div>
+      <div class="card-grid" id="restaurant-grid"></div>
+    </section>
+
+    <section id="info">
+      <h2 class="section-title"><span>ℹ️</span> Good to know</h2>
+      <div class="card-grid" id="info-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p id="footer-text"></p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

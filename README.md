@@ -7,12 +7,18 @@ No build step, no dependencies — plain HTML/CSS/JS, ready for GitHub Pages.
 
 ## Updating the content
 
-Everything shown on the site lives in **`js/data.js`** — schedule days, free time
-ideas, restaurants, and the info cards. Edit that one file (or ask Claude to),
-commit, push, and GitHub Pages redeploys automatically.
+Everything shown on the site lives in **`js/data.js`** — schedule days, the
+places catalog (eat + visit, per city, with coordinates), and the info cards.
+Edit that one file (or ask Claude to), commit, push, and GitHub Pages redeploys
+automatically. When any cached file changes, also bump `CACHE_VERSION` in
+`sw.js` so phones that installed the PWA pick up the update.
 
 The `📍 Maps` and `🚗 Waze` buttons are generated from each item's `location`
-text — on phones they open the Google Maps / Waze app directly.
+text — on phones they open the Google Maps / Waze app directly. Distance
+sorting/filtering uses each place's `lat`/`lng` plus the browser's location.
+
+The site is a PWA: visitors can "Add to Home Screen" and it keeps working
+offline (service worker in `sw.js`, manifest in `manifest.webmanifest`).
 
 ## Publishing on GitHub Pages
 

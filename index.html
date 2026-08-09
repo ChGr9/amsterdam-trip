@@ -6,7 +6,9 @@
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#c2410c">
   <title>Amsterdam Family Trip</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌷</text></svg>">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -28,8 +30,7 @@
 
   <nav class="section-nav" id="section-nav">
     <a href="#schedule" class="active" data-section="schedule">📅 Schedule</a>
-    <a href="#freetime" data-section="freetime">✨ Free time</a>
-    <a href="#restaurants" data-section="restaurants">🍽️ Food</a>
+    <a href="#explore" data-section="explore">🧭 Explore</a>
     <a href="#info" data-section="info">ℹ️ Info</a>
   </nav>
 
@@ -39,17 +40,43 @@
       <div id="day-content"></div>
     </section>
 
-    <section id="freetime">
-      <h2 class="section-title"><span>✨</span> Free time ideas</h2>
-      <p class="section-lede">Got a gap in the schedule? Pick something from here.</p>
-      <div class="card-grid" id="freetime-grid"></div>
-    </section>
+    <section id="explore">
+      <h2 class="section-title"><span>🧭</span> Explore places</h2>
+      <p class="section-lede">Everything worth eating and visiting — filter it down to what you fancy.</p>
 
-    <section id="restaurants">
-      <h2 class="section-title"><span>🍽️</span> Restaurants &amp; snacks</h2>
-      <p class="section-lede">Tried-and-tested places to eat, sorted by area.</p>
-      <div class="filter-row" id="food-filters"></div>
-      <div class="card-grid" id="restaurant-grid"></div>
+      <div class="explore-controls">
+        <div class="filter-row" id="city-filters" aria-label="City"></div>
+        <div class="filter-row" id="kind-filters" aria-label="Type"></div>
+
+        <div class="control-grid">
+          <input type="search" id="search-box" class="control" placeholder="🔍 Search places…" aria-label="Search places">
+          <select id="category-select" class="control" aria-label="Category"></select>
+          <select id="price-select" class="control" aria-label="Price">
+            <option value="">Any price</option>
+            <option value="€">€ cheap</option>
+            <option value="€€">€€ mid</option>
+            <option value="€€€">€€€ fancy</option>
+          </select>
+          <select id="sort-select" class="control" aria-label="Sort">
+            <option value="name">Sort: A–Z</option>
+            <option value="price">Sort: price</option>
+            <option value="distance">Sort: nearest</option>
+          </select>
+          <select id="radius-select" class="control" aria-label="Distance filter">
+            <option value="">Any distance</option>
+            <option value="0.5">Within 500 m</option>
+            <option value="1">Within 1 km</option>
+            <option value="2">Within 2 km</option>
+            <option value="5">Within 5 km</option>
+          </select>
+          <button id="locate-btn" class="control control-btn">📍 Use my location</button>
+        </div>
+        <p class="locate-status" id="locate-status"></p>
+      </div>
+
+      <p class="result-count" id="result-count"></p>
+      <div class="card-grid" id="place-grid"></div>
+      <div class="pagination" id="pagination"></div>
     </section>
 
     <section id="info">

@@ -1,26 +1,32 @@
 /* ============================================================
    TRIP DATA — this is the ONLY file you need to edit.
-   All content on the site (schedule, free time ideas,
-   restaurants, info) comes from this file.
+   All content on the site (schedule, places, info) comes
+   from this file.
 
    The SCHEDULE is the real booked itinerary (20–27 Aug 2026).
-   Free time ideas and restaurants are suggestions — edit freely.
+   PLACES is the explorer catalog — eat & visit, all cities.
 
-   Field reference for schedule items:
-     time     – start time, e.g. "09:30"  (optional)
-     end      – end time, e.g. "11:30"    (optional)
-     title    – what you're doing
-     desc     – extra notes for the family (optional)
-     cat      – "sight" | "food" | "travel" | "free"  (colors the timeline dot)
-     location – text used for the Google Maps / Waze buttons (optional)
-     tickets  – URL to the ticket page/booking (optional)
-     booked   – true = shows a green "Booked" badge,
-                false = shows a yellow "Book ahead" badge,
-                omit  = no badge
-     url      – website of the place (optional)
+   Schedule item fields:
+     time / end – "09:30" (optional)
+     title      – what you're doing
+     desc       – extra notes (optional)
+     cat        – "sight" | "food" | "travel" | "free"
+     location   – text for the Maps / Waze buttons (optional)
+     tickets    – URL to tickets (optional)
+     booked     – true = "Booked" badge, false = "Book ahead"
+     url        – website (optional)
+     explore    – city name; adds a button that opens the
+                  Explore section filtered to that city
 
-   All times are LOCAL to where we are at that moment
-   (Cyprus time in Cyprus, Dutch time in the Netherlands).
+   Place fields:
+     name, city ("Amsterdam" | "Utrecht" | "Zandvoort"),
+     kind ("eat" | "visit"), category (free text, used as filter),
+     area, price ("€" | "€€" | "€€€", eat only),
+     tags [array], desc,
+     lat / lng  – coordinates for the distance features,
+     location   – text for Maps/Waze, url, tickets (optional)
+
+   All times are LOCAL to where we are at that moment.
    ============================================================ */
 
 const TRIP = {
@@ -30,7 +36,8 @@ const TRIP = {
   hotel: {
     name: "The Social Hub Amsterdam City",
     location: "The Social Hub Amsterdam City, Wibautstraat 129, Amsterdam",
-    url: "https://www.thesocialhub.co/amsterdam-city/"
+    url: "https://www.thesocialhub.co/amsterdam-city/",
+    lat: 52.3547, lng: 4.9114
   },
 
   days: [
@@ -51,7 +58,8 @@ const TRIP = {
           location: "The Social Hub Amsterdam City, Wibautstraat 129, Amsterdam",
           url: "https://www.thesocialhub.co/amsterdam-city/" },
         { time: "19:30", title: "Dinner near the hotel", cat: "food",
-          desc: "Keep it easy after the flight — see the Restaurants section for ideas." }
+          desc: "Keep it easy after the flight — see the Explore section for ideas.",
+          explore: "Amsterdam" }
       ]
     },
     {
@@ -61,8 +69,9 @@ const TRIP = {
       desc: "Free morning exploring the centre, museum in the afternoon.",
       items: [
         { time: "10:00", title: "Explore the city", cat: "free",
-          desc: "Canal ring, Dam Square, Jordaan, Nine Streets — or pick from the Free time ideas below.",
-          location: "Dam Square, Amsterdam" },
+          desc: "Canal ring, Dam Square, Jordaan, Nine Streets — or pick from the Explore section.",
+          location: "Dam Square, Amsterdam",
+          explore: "Amsterdam" },
         { time: "13:00", title: "Lunch", cat: "food",
           desc: "Wherever we end up — Fabel Friet or a stroopwafel stop are near the Nine Streets." },
         { time: "16:00", end: "18:00", title: "Van Gogh Museum", cat: "sight", booked: true,
@@ -85,7 +94,8 @@ const TRIP = {
         { time: "10:00", title: "Circuit Zandvoort — qualifying day", cat: "sight", booked: true,
           desc: "Practice + qualifying. Bring earplugs (seriously), sunscreen and a rain layer — it's on the coast. Mostly cashless at the circuit.",
           location: "Circuit Zandvoort",
-          url: "https://www.dutchgp.com/en/" },
+          url: "https://www.dutchgp.com/en/",
+          explore: "Zandvoort" },
         { time: "18:30", title: "Train back + dinner", cat: "food",
           desc: "Expect queues for the train after the sessions end — grab food in Zandvoort if the line is crazy.",
           location: "Zandvoort aan Zee station" }
@@ -103,7 +113,8 @@ const TRIP = {
         { time: "10:00", title: "Circuit Zandvoort — RACE DAY", cat: "sight", booked: true,
           desc: "Support races in the morning, main race in the afternoon. Beach is right there if anyone needs a break from the noise.",
           location: "Circuit Zandvoort",
-          url: "https://www.dutchgp.com/en/" },
+          url: "https://www.dutchgp.com/en/",
+          explore: "Zandvoort" },
         { time: "19:00", title: "Head back & dinner", cat: "food",
           desc: "Patience for the trains — everyone leaves at once after the race." }
       ]
@@ -115,22 +126,12 @@ const TRIP = {
       desc: "Slower day in the Netherlands' prettiest small city — 27 min by train.",
       items: [
         { time: "09:30", title: "Train to Utrecht Centraal", cat: "travel",
-          desc: "Direct intercity from Amsterdam Centraal every ~10 min, 27 min ride.",
+          desc: "Direct intercity from Amsterdam Centraal every ~10 min, 27 min ride. Also stops at Amstel station near the hotel.",
           location: "Amsterdam Centraal" },
-        { time: "10:30", title: "Old town & canal wharves", cat: "sight",
-          desc: "Utrecht's canals have unique wharf cellars at water level — great for a wander and a coffee.",
-          location: "Oudegracht, Utrecht" },
-        { time: "12:00", title: "Dom Tower", cat: "sight", booked: false,
-          desc: "Tallest church tower in NL — 465 steps, amazing view. Guided climbs only, book a slot.",
-          location: "Domtoren, Utrecht",
-          tickets: "https://www.domtoren.nl/en/tickets",
-          url: "https://www.domtoren.nl/en" },
-        { time: "13:30", title: "Lunch in the old town", cat: "food",
-          location: "Oudegracht, Utrecht" },
-        { time: "15:00", title: "Pick one: Railway Museum or Miffy Museum", cat: "free",
-          desc: "Spoorwegmuseum (trains, big hit with kids) or Nijntje Museum (Miffy was born in Utrecht — best for little ones).",
-          location: "Spoorwegmuseum, Utrecht",
-          url: "https://www.spoorwegmuseum.nl/en/" },
+        { time: "10:30", title: "Explore Utrecht", cat: "free",
+          desc: "Canal wharves, Dom Tower, museums, lunch spots — everything is in the Explore section, filtered to Utrecht.",
+          location: "Oudegracht, Utrecht",
+          explore: "Utrecht" },
         { time: "18:00", title: "Train back to Amsterdam", cat: "travel",
           location: "Utrecht Centraal" }
       ]
@@ -139,10 +140,11 @@ const TRIP = {
       date: "2026-08-25",
       label: "Day 6",
       theme: "Free day",
-      desc: "Nothing booked — pick whatever we fancy from the Free time ideas below.",
+      desc: "Nothing booked — pick whatever we fancy from the Explore section.",
       items: [
         { time: "10:00", title: "Open day — family's choice", cat: "free",
-          desc: "Canal cruise? A'DAM Lookout? Vondelpark + bikes? Day at the beach? Scroll down to Free time ideas and vote." },
+          desc: "Canal cruise? A'DAM Lookout? Vondelpark + bikes? Day at the beach? Open Explore and vote.",
+          explore: "Amsterdam" },
         { time: "19:00", title: "Dinner", cat: "food",
           desc: "Good night to book somewhere nice — Moeders needs a reservation." }
       ]
@@ -161,7 +163,8 @@ const TRIP = {
           desc: "NEMO rooftop café, or walk to the centre.",
           location: "NEMO Science Museum, Amsterdam" },
         { time: "15:00", title: "Free afternoon", cat: "free",
-          desc: "Souvenirs (Bloemenmarkt for tulip bulbs), anything we missed, or just a canal-side ice cream." },
+          desc: "Souvenirs (Bloemenmarkt for tulip bulbs), anything we missed, or just a canal-side ice cream.",
+          explore: "Amsterdam" },
         { time: "19:00", title: "Farewell dinner", cat: "food",
           desc: "Last dinner in Amsterdam — make it count." }
       ]
@@ -184,58 +187,195 @@ const TRIP = {
     }
   ],
 
-  freeTime: [
-    { title: "Canal cruise", area: "Centre", tags: ["classic", "relaxing"],
-      desc: "Open boat, ~75 minutes through the canal ring. The best first-look at the city.",
-      location: "Amsterdam Centraal",
-      tickets: "https://www.lovers.nl/en/canal-cruises/" },
-    { title: "Vondelpark", area: "Museum Quarter", tags: ["outdoors", "free", "kids"],
-      desc: "Amsterdam's Central Park. Playgrounds, ponds, and a pancake house in the middle. Rent bikes nearby.",
-      location: "Vondelpark, Amsterdam" },
-    { title: "A'DAM Lookout swing", area: "Noord", tags: ["thrill", "views"],
-      desc: "Europe's highest swing, hanging over the edge of a 100 m tower. Free ferry ride there from Centraal.",
-      location: "A'DAM Lookout, Amsterdam",
-      tickets: "https://www.adamlookout.com/tickets/",
-      url: "https://www.adamlookout.com/" },
-    { title: "Nine Streets shopping", area: "Canal ring", tags: ["shopping", "free"],
-      desc: "Nine little streets of boutiques, vintage shops and cafés between the canals.",
-      location: "De 9 Straatjes, Amsterdam" },
-    { title: "Bloemenmarkt", area: "Centre", tags: ["free", "quick stop"],
-      desc: "The floating flower market. Tulip bulbs make good souvenirs (check they're export-certified).",
-      location: "Bloemenmarkt, Amsterdam" },
-    { title: "Rijksmuseum", area: "Museum Quarter", tags: ["art", "rainy day"],
-      desc: "The Night Watch and 8000 more masterpieces. If we're in the mood for one more museum — book a slot first.",
-      location: "Rijksmuseum, Amsterdam",
-      tickets: "https://www.rijksmuseum.nl/en/tickets",
-      url: "https://www.rijksmuseum.nl/en" },
-    { title: "Zandvoort beach", area: "Zandvoort", tags: ["outdoors", "kids"],
-      desc: "We're there for the GP anyway — the beach is right next to the circuit. Also a nice free-day option by train.",
-      location: "Zandvoort aan Zee" }
-  ],
+  /* ---------- PLACES: the Explore catalog ---------- */
 
-  restaurants: [
-    { name: "Moeders", cuisine: "Dutch", area: "Jordaan", price: "€€",
+  places: [
+
+    /* ===== AMSTERDAM — VISIT ===== */
+    { name: "Rijksmuseum", city: "Amsterdam", kind: "visit", category: "Museum",
+      area: "Museum Quarter", tags: ["art", "rainy day", "book ahead"],
+      desc: "The Night Watch and 8000 more masterpieces. Book a time slot first.",
+      lat: 52.3600, lng: 4.8852, location: "Rijksmuseum, Amsterdam",
+      tickets: "https://www.rijksmuseum.nl/en/tickets", url: "https://www.rijksmuseum.nl/en" },
+    { name: "Anne Frank House", city: "Amsterdam", kind: "visit", category: "Museum",
+      area: "Jordaan", tags: ["history", "book ahead"],
+      desc: "Moving and unmissable — but tickets release ~6 weeks ahead and vanish fast.",
+      lat: 52.3752, lng: 4.8840, location: "Anne Frank House, Amsterdam",
+      tickets: "https://www.annefrank.org/en/museum/tickets/", url: "https://www.annefrank.org/en/" },
+    { name: "Canal cruise", city: "Amsterdam", kind: "visit", category: "Activity",
+      area: "Centre", tags: ["classic", "relaxing", "kids"],
+      desc: "Open boat, ~75 minutes through the canal ring. The best first-look at the city.",
+      lat: 52.3776, lng: 4.8987, location: "Prins Hendrikkade 25, Amsterdam",
+      tickets: "https://www.lovers.nl/en/canal-cruises/" },
+    { name: "Vondelpark", city: "Amsterdam", kind: "visit", category: "Park",
+      area: "Museum Quarter", tags: ["outdoors", "free", "kids"],
+      desc: "Amsterdam's Central Park. Playgrounds, ponds, and a pancake house in the middle. Rent bikes nearby.",
+      lat: 52.3579, lng: 4.8686, location: "Vondelpark, Amsterdam" },
+    { name: "A'DAM Lookout swing", city: "Amsterdam", kind: "visit", category: "Viewpoint",
+      area: "Noord", tags: ["thrill", "views"],
+      desc: "Europe's highest swing, over the edge of a 100 m tower. Free ferry from Centraal.",
+      lat: 52.3840, lng: 4.9026, location: "A'DAM Lookout, Amsterdam",
+      tickets: "https://www.adamlookout.com/tickets/", url: "https://www.adamlookout.com/" },
+    { name: "Nine Streets", city: "Amsterdam", kind: "visit", category: "Neighbourhood",
+      area: "Canal ring", tags: ["shopping", "free"],
+      desc: "Nine little streets of boutiques, vintage shops and cafés between the canals.",
+      lat: 52.3693, lng: 4.8862, location: "De 9 Straatjes, Amsterdam" },
+    { name: "Bloemenmarkt", city: "Amsterdam", kind: "visit", category: "Market",
+      area: "Centre", tags: ["free", "quick stop", "souvenirs"],
+      desc: "The floating flower market. Tulip bulbs make good souvenirs (check they're export-certified).",
+      lat: 52.3665, lng: 4.8913, location: "Bloemenmarkt, Amsterdam" },
+    { name: "Albert Cuyp Markt", city: "Amsterdam", kind: "visit", category: "Market",
+      area: "De Pijp", tags: ["free", "street food"],
+      desc: "The city's biggest street market — and the home of fresh warm stroopwafels.",
+      lat: 52.3557, lng: 4.8934, location: "Albert Cuyp Markt, Amsterdam" },
+    { name: "Jordaan wander", city: "Amsterdam", kind: "visit", category: "Neighbourhood",
+      area: "Jordaan", tags: ["free", "photogenic"],
+      desc: "The prettiest canals, hidden courtyards and brown cafés. Best on foot, no plan.",
+      lat: 52.3739, lng: 4.8809, location: "Jordaan, Amsterdam" },
+    { name: "ARTIS Zoo", city: "Amsterdam", kind: "visit", category: "Zoo",
+      area: "Plantage", tags: ["kids", "half day"],
+      desc: "One of Europe's oldest zoos, right in the city. Combine with the Micropia microbe museum next door.",
+      lat: 52.3663, lng: 4.9163, location: "ARTIS, Amsterdam",
+      tickets: "https://www.artis.nl/en/plan-your-visit/tickets/", url: "https://www.artis.nl/en/" },
+    { name: "Maritime Museum", city: "Amsterdam", kind: "visit", category: "Museum",
+      area: "Oosterdok", tags: ["kids", "rainy day"],
+      desc: "Climb aboard a full-size replica VOC sailing ship. 5 min walk from NEMO.",
+      lat: 52.3714, lng: 4.9153, location: "Het Scheepvaartmuseum, Amsterdam",
+      url: "https://www.hetscheepvaartmuseum.com/" },
+    { name: "Begijnhof", city: "Amsterdam", kind: "visit", category: "Landmark",
+      area: "Centre", tags: ["free", "quiet", "quick stop"],
+      desc: "A hidden medieval courtyard in the middle of the city. Enter quietly — people live here.",
+      lat: 52.3689, lng: 4.8899, location: "Begijnhof, Amsterdam" },
+    { name: "Body Worlds", city: "Amsterdam", kind: "visit", category: "Museum",
+      area: "Damrak", tags: ["rainy day", "teens"],
+      desc: "The anatomy exhibition — fascinating or gross depending who you ask. Good rainy-day backup.",
+      lat: 52.3741, lng: 4.8934, location: "Body Worlds, Damrak 66, Amsterdam",
+      url: "https://bodyworlds.nl/en/" },
+    { name: "Westerpark", city: "Amsterdam", kind: "visit", category: "Park",
+      area: "West", tags: ["outdoors", "free"],
+      desc: "Big park + the Westergas culture complex: food, little festivals, space to run around.",
+      lat: 52.3866, lng: 4.8768, location: "Westerpark, Amsterdam" },
+
+    /* ===== AMSTERDAM — EAT ===== */
+    { name: "Moeders", city: "Amsterdam", kind: "eat", category: "Dutch",
+      area: "Jordaan", price: "€€", tags: ["dinner", "book ahead"],
       desc: "Classic Dutch home cooking, walls covered in photos of mothers. Book ahead!",
-      location: "Moeders, Rozengracht, Amsterdam",
+      lat: 52.3735, lng: 4.8785, location: "Moeders, Rozengracht 251, Amsterdam",
       url: "https://www.moeders.com/" },
-    { name: "Foodhallen", cuisine: "Food court", area: "Oud-West", price: "€€",
+    { name: "Foodhallen", city: "Amsterdam", kind: "eat", category: "Food court",
+      area: "Oud-West", price: "€€", tags: ["lunch", "dinner", "something for everyone"],
       desc: "Indoor food market with 20+ stands — perfect when everyone wants something different.",
-      location: "Foodhallen, Amsterdam",
-      url: "https://foodhallen.nl/" },
-    { name: "The Pancake Bakery", cuisine: "Pancakes", area: "Prinsengracht", price: "€€",
-      desc: "75 kinds of Dutch pancakes in an old canal warehouse.",
-      location: "The Pancake Bakery, Amsterdam",
-      url: "https://pancake.nl/" },
-    { name: "Winkel 43", cuisine: "Café", area: "Jordaan", price: "€",
+      lat: 52.3667, lng: 4.8686, location: "Foodhallen, Amsterdam", url: "https://foodhallen.nl/" },
+    { name: "The Pancake Bakery", city: "Amsterdam", kind: "eat", category: "Pancakes",
+      area: "Prinsengracht", price: "€€", tags: ["kids", "lunch"],
+      desc: "75 kinds of Dutch pancakes in an old canal warehouse. Near Anne Frank House.",
+      lat: 52.3763, lng: 4.8845, location: "The Pancake Bakery, Amsterdam", url: "https://pancake.nl/" },
+    { name: "Winkel 43", city: "Amsterdam", kind: "eat", category: "Café",
+      area: "Jordaan", price: "€", tags: ["apple pie", "snack"],
       desc: "THE apple pie. Expect a queue on weekends — worth it.",
-      location: "Winkel 43, Amsterdam",
-      url: "https://winkel43.nl/" },
-    { name: "Fabel Friet", cuisine: "Fries", area: "Nine Streets", price: "€",
+      lat: 52.3796, lng: 4.8865, location: "Winkel 43, Noordermarkt, Amsterdam", url: "https://winkel43.nl/" },
+    { name: "Fabel Friet", city: "Amsterdam", kind: "eat", category: "Fries",
+      area: "Nine Streets", price: "€", tags: ["snack", "famous"],
       desc: "The famous crispy fries with melted cheese. The line moves fast.",
-      location: "Fabel Friet, Amsterdam" },
-    { name: "Kam Yin", cuisine: "Surinamese", area: "Centre", price: "€",
+      lat: 52.3690, lng: 4.8849, location: "Fabel Friet, Runstraat, Amsterdam" },
+    { name: "Vleminckx Sausmeesters", city: "Amsterdam", kind: "eat", category: "Fries",
+      area: "Centre", price: "€", tags: ["snack", "since 1957"],
+      desc: "The other legendary fries wall — Amsterdammers argue about which is best. Try both, settle it.",
+      lat: 52.3688, lng: 4.8905, location: "Vleminckx, Voetboogstraat, Amsterdam" },
+    { name: "Van Stapele Koekmakerij", city: "Amsterdam", kind: "eat", category: "Bakery",
+      area: "Centre", price: "€", tags: ["snack", "one thing only"],
+      desc: "Sells exactly one thing: a warm dark-chocolate cookie with white chocolate inside. Often sold out by afternoon.",
+      lat: 52.3697, lng: 4.8907, location: "Van Stapele, Heisteeg 4, Amsterdam", url: "https://vanstapele.com/" },
+    { name: "Kam Yin", city: "Amsterdam", kind: "eat", category: "Surinamese",
+      area: "Centre", price: "€", tags: ["lunch", "cheap & good"],
       desc: "Cheap, fast and delicious Surinamese-Chinese — try the roti or a broodje pom.",
-      location: "Kam Yin, Warmoesstraat, Amsterdam" }
+      lat: 52.3757, lng: 4.8977, location: "Kam Yin, Warmoesstraat, Amsterdam" },
+    { name: "The Seafood Bar", city: "Amsterdam", kind: "eat", category: "Seafood",
+      area: "Centre", price: "€€€", tags: ["dinner", "fish"],
+      desc: "Bright, busy seafood place — great fruits de mer and fish & chips.",
+      lat: 52.3679, lng: 4.8896, location: "The Seafood Bar, Spui, Amsterdam",
+      url: "https://www.theseafoodbar.com/" },
+    { name: "Café de Klos", city: "Amsterdam", kind: "eat", category: "Grill",
+      area: "Leidseplein", price: "€€", tags: ["dinner", "ribs", "no reservations"],
+      desc: "Legendary spare ribs in a tiny smoky bar. No bookings — go early or queue.",
+      lat: 52.3629, lng: 4.8834, location: "Café de Klos, Kerkstraat 41, Amsterdam" },
+    { name: "Bakers & Roasters", city: "Amsterdam", kind: "eat", category: "Brunch",
+      area: "De Pijp", price: "€€", tags: ["breakfast", "brunch"],
+      desc: "Kiwi/Brazilian brunch spot — banana bread french toast worth getting up for.",
+      lat: 52.3562, lng: 4.8890, location: "Bakers & Roasters, Amsterdam",
+      url: "https://www.bakersandroasters.com/" },
+    { name: "Sea Palace", city: "Amsterdam", kind: "eat", category: "Chinese",
+      area: "Oosterdok", price: "€€", tags: ["dinner", "floating restaurant", "kids"],
+      desc: "A giant floating pagoda restaurant — the novelty alone is worth it, dim sum is solid. Near NEMO.",
+      lat: 52.3746, lng: 4.9075, location: "Sea Palace, Amsterdam", url: "https://seapalace.nl/en/" },
+    { name: "FEBO", city: "Amsterdam", kind: "eat", category: "Snacks",
+      area: "Everywhere", price: "€", tags: ["snack", "experience", "kids"],
+      desc: "Hot snacks from a wall of vending hatches — a Dutch rite of passage. Get a kroket.",
+      lat: 52.3730, lng: 4.8926, location: "FEBO Damrak, Amsterdam" },
+
+    /* ===== UTRECHT — VISIT ===== */
+    { name: "Dom Tower", city: "Utrecht", kind: "visit", category: "Landmark",
+      area: "Old town", tags: ["views", "book ahead"],
+      desc: "Tallest church tower in NL — 465 steps, amazing view. Guided climbs only, book a slot.",
+      lat: 52.0907, lng: 5.1214, location: "Domtoren, Utrecht",
+      tickets: "https://www.domtoren.nl/en/tickets", url: "https://www.domtoren.nl/en" },
+    { name: "Oudegracht wharves", city: "Utrecht", kind: "visit", category: "Landmark",
+      area: "Old town", tags: ["free", "photogenic"],
+      desc: "Utrecht's signature: canals with wharf cellars at water level, now cafés and shops.",
+      lat: 52.0894, lng: 5.1204, location: "Oudegracht, Utrecht" },
+    { name: "Railway Museum", city: "Utrecht", kind: "visit", category: "Museum",
+      area: "Maliebaan", tags: ["kids", "trains", "half day"],
+      desc: "Het Spoorwegmuseum — real locomotives, rides and simulators in a grand old station. Big hit with kids.",
+      lat: 52.0876, lng: 5.1310, location: "Spoorwegmuseum, Utrecht",
+      tickets: "https://www.spoorwegmuseum.nl/en/plan-your-visit/", url: "https://www.spoorwegmuseum.nl/en/" },
+    { name: "Miffy Museum", city: "Utrecht", kind: "visit", category: "Museum",
+      area: "Museum quarter", tags: ["little kids", "book ahead"],
+      desc: "Miffy (nijntje) was born in Utrecht. Aimed at ages 2–6 — skip unless someone's the right age.",
+      lat: 52.0851, lng: 5.1215, location: "Nijntje Museum, Utrecht",
+      tickets: "https://nijntjemuseum.nl/en/", url: "https://nijntjemuseum.nl/en/" },
+    { name: "Centraal Museum", city: "Utrecht", kind: "visit", category: "Museum",
+      area: "Museum quarter", tags: ["art", "rainy day"],
+      desc: "Utrecht's main museum: art, design and the world's largest Rietveld collection.",
+      lat: 52.0846, lng: 5.1211, location: "Centraal Museum, Utrecht",
+      url: "https://www.centraalmuseum.nl/en" },
+    { name: "Canal pedal boats", city: "Utrecht", kind: "visit", category: "Activity",
+      area: "Old town", tags: ["outdoors", "kids"],
+      desc: "Rent a pedal boat or canoe and see the wharves from water level.",
+      lat: 52.0894, lng: 5.1204, location: "Kanoverhuur Utrecht, Oudegracht" },
+
+    /* ===== UTRECHT — EAT ===== */
+    { name: "Broodje Mario", city: "Utrecht", kind: "eat", category: "Sandwiches",
+      area: "Old town", price: "€", tags: ["lunch", "famous", "quick"],
+      desc: "The legendary Italian sandwich of Utrecht — locals queue for it since 1974.",
+      lat: 52.0929, lng: 5.1178, location: "Broodje Mario, Oudegracht 130, Utrecht" },
+    { name: "Winkel van Sinkel", city: "Utrecht", kind: "eat", category: "Grand café",
+      area: "Old town", price: "€€", tags: ["lunch", "dinner", "landmark"],
+      desc: "Grand café in a huge 19th-century department store on the canal. Nice terrace on the wharf.",
+      lat: 52.0910, lng: 5.1197, location: "Winkel van Sinkel, Utrecht",
+      url: "https://www.dewinkelvansinkel.nl/" },
+    { name: "Olivier", city: "Utrecht", kind: "eat", category: "Belgian café",
+      area: "Old town", price: "€€", tags: ["dinner", "in a church"],
+      desc: "Belgian beer café inside a converted hidden church — huge and atmospheric, decent burgers and stews.",
+      lat: 52.0937, lng: 5.1156, location: "Belgisch Biercafé Olivier, Utrecht" },
+    { name: "The Village Coffee", city: "Utrecht", kind: "eat", category: "Café",
+      area: "Voorstraat", price: "€", tags: ["coffee", "snack"],
+      desc: "Utrecht's favourite specialty coffee stop, good cakes.",
+      lat: 52.0936, lng: 5.1229, location: "The Village Coffee, Voorstraat 46, Utrecht" },
+
+    /* ===== ZANDVOORT ===== */
+    { name: "Circuit Zandvoort", city: "Zandvoort", kind: "visit", category: "Activity",
+      area: "Circuit", tags: ["GP weekend"],
+      desc: "Where we'll be Sat + Sun for the Dutch GP. Short walk from the station.",
+      lat: 52.3888, lng: 4.5409, location: "Circuit Zandvoort",
+      url: "https://www.dutchgp.com/en/" },
+    { name: "Zandvoort beach", city: "Zandvoort", kind: "visit", category: "Beach",
+      area: "Boulevard", tags: ["outdoors", "kids", "free"],
+      desc: "Wide sandy North Sea beach, right next to the circuit. Beach clubs all along.",
+      lat: 52.3731, lng: 4.5289, location: "Zandvoort aan Zee beach" },
+    { name: "Beach pavilion dinner", city: "Zandvoort", kind: "eat", category: "Beach club",
+      area: "Boulevard", price: "€€", tags: ["dinner", "sunset"],
+      desc: "Dozens of beach pavilions on the sand — pick any for dinner with a sunset over the sea after the racing.",
+      lat: 52.3740, lng: 4.5300, location: "Strandpaviljoens Zandvoort" }
   ],
 
   info: [
@@ -251,6 +391,8 @@ const TRIP = {
       desc: "Amsterdam weather changes by the hour. Light rain jacket every day, even if the morning looks sunny — especially at the coast in Zandvoort." },
     { icon: "🕐", title: "Time zones",
       desc: "Netherlands is 1 hour behind Cyprus. All times in this schedule are local to wherever we are at that moment." },
+    { icon: "📱", title: "Add to Home Screen",
+      desc: "Open this site in Safari/Chrome → Share → 'Add to Home Screen'. It becomes an app icon and keeps working offline — handy at the circuit where the network dies." },
     { icon: "🆘", title: "Emergency",
       desc: "112 for police/ambulance/fire (EU-wide). Pharmacies are called 'apotheek'." }
   ]

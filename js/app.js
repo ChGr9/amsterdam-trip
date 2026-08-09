@@ -169,231 +169,225 @@
     box.appendChild(tl);
   }
 
-  /* ---------- explore ---------- */
+  /* ---------- explore (one instance per section) ---------- */
 
   const PAGE_SIZE = 8;
 
-  const state = {
-    city: "All",
-    kind: "All",
-    category: "",
-    price: "",
-    search: "",
-    sort: "name",
-    radiusKm: "",
-    page: 1,
-    myPos: null       // {lat, lng} once located
-  };
+  // Shared between both explorers
+  const shared = { myPos: null };
+  const explorers = [];
 
-  const KINDS = [
-    { key: "All", label: "Everything" },
-    { key: "visit", label: "🏛️ Visit" },
-    { key: "eat", label: "🍽️ Eat" }
-  ];
+  function createExplorer(root) {
+    const kind = root.dataset.kind;              // "visit" | "eat"
+    const q = (sel) => root.querySelector(sel);
 
-  function cities() {
-    return ["All", ...new Set(TRIP.places.map((p) => p.city))];
-  }
+    const state = {
+      city: "All",
+      category: "",
+      price: "",
+      search: "",
+      sort: "name",
+      radiusKm: "",
+      page: 1
+    };
 
-  function chipRow(container, items, activeKey, onPick, labelOf) {
-    const row = $(container);
-    row.innerHTML = "";
-    items.forEach((it) => {
-      const key = typeof it === "string" ? it : it.key;
-      const label = labelOf ? labelOf(it) : (typeof it === "string" ? it : it.label);
-      const chip = el("button", "filter-chip" + (key === activeKey ? " active" : ""), esc(label));
-      chip.addEventListener("click", () => onPick(key));
-      row.appendChild(chip);
-    });
-  }
+    const pool = () => TRIP.places.filter((p) => p.kind === kind);
 
-  function renderFilters() {
-    chipRow("#city-filters", cities(), state.city, (c) => {
-      state.city = c;
-      state.category = "";
-      state.page = 1;
-      renderExplore();
-    });
-
-    chipRow("#kind-filters", KINDS, state.kind, (k) => {
-      state.kind = k;
-      state.category = "";
-      state.page = 1;
-      renderExplore();
-    });
-
-    // Category dropdown adapts to current city/kind selection
-    const pool = TRIP.places.filter((p) =>
-      (state.city === "All" || p.city === state.city) &&
-      (state.kind === "All" || p.kind === state.kind));
-    const cats = [...new Set(pool.map((p) => p.category))].sort();
-    const sel = $("#category-select");
-    sel.innerHTML = "<option value=\"\">All categories</option>" +
-      cats.map((c) => "<option" + (c === state.category ? " selected" : "") + ">" + esc(c) + "</option>").join("");
-  }
-
-  function filteredPlaces() {
-    let list = TRIP.places.slice();
-
-    if (state.city !== "All") list = list.filter((p) => p.city === state.city);
-    if (state.kind !== "All") list = list.filter((p) => p.kind === state.kind);
-    if (state.category) list = list.filter((p) => p.category === state.category);
-    if (state.price) list = list.filter((p) => (p.price || "") === state.price);
-
-    if (state.search) {
-      const q = state.search.toLowerCase();
-      list = list.filter((p) =>
-        [p.name, p.desc, p.area, p.category, (p.tags || []).join(" ")]
-          .join(" ").toLowerCase().includes(q));
+    function cities() {
+      return ["All", ...new Set(pool().map((p) => p.city))];
     }
 
-    // attach distance if located
-    if (state.myPos) {
-      list.forEach((p) => {
-        p._dist = (p.lat != null) ?
-          distKm(state.myPos.lat, state.myPos.lng, p.lat, p.lng) : null;
+    function renderFilters() {
+      const row = q(".city-filters");
+      row.innerHTML = "";
+      cities().forEach((c) => {
+        const chip = el("button", "filter-chip" + (c === state.city ? " active" : ""), esc(c));
+        chip.addEventListener("click", () => {
+          state.city = c;
+          state.category = "";
+          state.page = 1;
+          render();
+        });
+        row.appendChild(chip);
       });
-      if (state.radiusKm) {
-        list = list.filter((p) => p._dist != null && p._dist <= Number(state.radiusKm));
+
+      const catPool = pool().filter((p) => state.city === "All" || p.city === state.city);
+      const cats = [...new Set(catPool.map((p) => p.category))].sort();
+      q(".category-select").innerHTML = "<option value=\"\">All categories</option>" +
+        cats.map((c) => "<option" + (c === state.category ? " selected" : "") + ">" + esc(c) + "</option>").join("");
+    }
+
+    function filtered() {
+      let list = pool();
+
+      if (state.city !== "All") list = list.filter((p) => p.city === state.city);
+      if (state.category) list = list.filter((p) => p.category === state.category);
+      if (state.price) list = list.filter((p) => (p.price || "") === state.price);
+
+      if (state.search) {
+        const s = state.search.toLowerCase();
+        list = list.filter((p) =>
+          [p.name, p.desc, p.area, p.category, (p.tags || []).join(" ")]
+            .join(" ").toLowerCase().includes(s));
+      }
+
+      if (shared.myPos) {
+        list.forEach((p) => {
+          p._dist = (p.lat != null) ?
+            distKm(shared.myPos.lat, shared.myPos.lng, p.lat, p.lng) : null;
+        });
+        if (state.radiusKm) {
+          list = list.filter((p) => p._dist != null && p._dist <= Number(state.radiusKm));
+        }
+      }
+
+      const priceRank = (p) => (p.price || "").length || 99;
+      if (state.sort === "name") list.sort((a, b) => a.name.localeCompare(b.name));
+      if (state.sort === "price") list.sort((a, b) => priceRank(a) - priceRank(b) || a.name.localeCompare(b.name));
+      if (state.sort === "distance" && shared.myPos) {
+        list.sort((a, b) => (a._dist ?? Infinity) - (b._dist ?? Infinity));
+      }
+
+      return list;
+    }
+
+    function placeCard(p) {
+      const card = el("div", "idea-card");
+      const head = el("div", "idea-head");
+      head.appendChild(el("h4", null, esc(p.name)));
+      const metaBits = [];
+      if (p.price) metaBits.push(p.price);
+      if (p.area) metaBits.push(p.area);
+      head.appendChild(el("span", "idea-meta", esc(metaBits.join(" · "))));
+      card.appendChild(head);
+
+      const tags = el("div", "idea-tags");
+      tags.appendChild(el("span", "tag tag-city", esc(p.city)));
+      tags.appendChild(el("span", "tag", esc(p.category)));
+      (p.tags || []).forEach((t) => tags.appendChild(el("span", "tag", esc(t))));
+      if (shared.myPos && p._dist != null) {
+        tags.appendChild(el("span", "tag tag-dist", "📏 " + fmtDist(p._dist)));
+      }
+      card.appendChild(tags);
+
+      if (p.desc) card.appendChild(el("p", null, esc(p.desc)));
+
+      const actions = actionButtons(p);
+      if (actions) card.appendChild(actions);
+      return card;
+    }
+
+    function render() {
+      renderFilters();
+
+      const list = filtered();
+      const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+      if (state.page > pages) state.page = pages;
+      const start = (state.page - 1) * PAGE_SIZE;
+      const pageItems = list.slice(start, start + PAGE_SIZE);
+
+      q(".result-count").textContent = list.length
+        ? list.length + " place" + (list.length === 1 ? "" : "s") +
+          (pages > 1 ? " · page " + state.page + " of " + pages : "")
+        : "Nothing matches those filters — loosen something.";
+
+      const grid = q(".place-grid");
+      grid.innerHTML = "";
+      pageItems.forEach((p) => grid.appendChild(placeCard(p)));
+
+      const pag = q(".pagination");
+      pag.innerHTML = "";
+      if (pages > 1) {
+        const mk = (label, page, disabled, current) => {
+          const b = el("button", "page-btn" + (current ? " active" : ""), label);
+          b.disabled = !!disabled;
+          b.addEventListener("click", () => {
+            state.page = page;
+            render();
+            root.scrollIntoView({ behavior: "smooth" });
+          });
+          return b;
+        };
+        pag.appendChild(mk("‹", state.page - 1, state.page === 1));
+        for (let i = 1; i <= pages; i++) pag.appendChild(mk(String(i), i, false, i === state.page));
+        pag.appendChild(mk("›", state.page + 1, state.page === pages));
       }
     }
 
-    const priceRank = (p) => (p.price || "").length || 99;
-    if (state.sort === "name") list.sort((a, b) => a.name.localeCompare(b.name));
-    if (state.sort === "price") list.sort((a, b) => priceRank(a) - priceRank(b) || a.name.localeCompare(b.name));
-    if (state.sort === "distance" && state.myPos) {
-      list.sort((a, b) => (a._dist ?? Infinity) - (b._dist ?? Infinity));
-    }
-
-    return list;
-  }
-
-  function placeCard(p) {
-    const card = el("div", "idea-card");
-    const head = el("div", "idea-head");
-    head.appendChild(el("h4", null,
-      (p.kind === "eat" ? "🍽️ " : "🏛️ ") + esc(p.name)));
-    const metaBits = [];
-    if (p.price) metaBits.push(p.price);
-    if (p.area) metaBits.push(p.area);
-    head.appendChild(el("span", "idea-meta", esc(metaBits.join(" · "))));
-    card.appendChild(head);
-
-    const tags = el("div", "idea-tags");
-    tags.appendChild(el("span", "tag tag-city", esc(p.city)));
-    tags.appendChild(el("span", "tag", esc(p.category)));
-    (p.tags || []).forEach((t) => tags.appendChild(el("span", "tag", esc(t))));
-    if (state.myPos && p._dist != null) {
-      tags.appendChild(el("span", "tag tag-dist", "📏 " + fmtDist(p._dist)));
-    }
-    card.appendChild(tags);
-
-    if (p.desc) card.appendChild(el("p", null, esc(p.desc)));
-
-    const actions = actionButtons(p);
-    if (actions) card.appendChild(actions);
-    return card;
-  }
-
-  function renderExplore() {
-    renderFilters();
-
-    const list = filteredPlaces();
-    const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
-    if (state.page > pages) state.page = pages;
-    const start = (state.page - 1) * PAGE_SIZE;
-    const pageItems = list.slice(start, start + PAGE_SIZE);
-
-    $("#result-count").textContent = list.length
-      ? list.length + " place" + (list.length === 1 ? "" : "s") +
-        (pages > 1 ? " · page " + state.page + " of " + pages : "")
-      : "Nothing matches those filters — loosen something.";
-
-    const grid = $("#place-grid");
-    grid.innerHTML = "";
-    pageItems.forEach((p) => grid.appendChild(placeCard(p)));
-
-    // pagination
-    const pag = $("#pagination");
-    pag.innerHTML = "";
-    if (pages > 1) {
-      const mk = (label, page, disabled, current) => {
-        const b = el("button", "page-btn" + (current ? " active" : ""), label);
-        b.disabled = !!disabled;
-        b.addEventListener("click", () => {
-          state.page = page;
-          renderExplore();
-          $("#explore").scrollIntoView({ behavior: "smooth" });
-        });
-        return b;
-      };
-      pag.appendChild(mk("‹", state.page - 1, state.page === 1));
-      for (let i = 1; i <= pages; i++) pag.appendChild(mk(String(i), i, false, i === state.page));
-      pag.appendChild(mk("›", state.page + 1, state.page === pages));
-    }
-  }
-
-  // Jump to Explore pre-filtered to a city (from schedule buttons)
-  function openExplore(city) {
-    state.city = city;
-    state.kind = "All";
-    state.category = "";
-    state.page = 1;
-    renderExplore();
-    $("#explore").scrollIntoView({ behavior: "smooth" });
-  }
-
-  function initExploreControls() {
-    $("#search-box").addEventListener("input", (e) => {
+    /* controls */
+    q(".search-box").addEventListener("input", (e) => {
       state.search = e.target.value.trim();
       state.page = 1;
-      renderExplore();
+      render();
     });
-    $("#category-select").addEventListener("change", (e) => {
+    q(".category-select").addEventListener("change", (e) => {
       state.category = e.target.value;
       state.page = 1;
-      renderExplore();
+      render();
     });
-    $("#price-select").addEventListener("change", (e) => {
+    const priceSel = q(".price-select");
+    if (priceSel) priceSel.addEventListener("change", (e) => {
       state.price = e.target.value;
       state.page = 1;
-      renderExplore();
+      render();
     });
-    $("#sort-select").addEventListener("change", (e) => {
+    q(".sort-select").addEventListener("change", (e) => {
       state.sort = e.target.value;
-      if (state.sort === "distance" && !state.myPos) locate();
-      renderExplore();
+      if (state.sort === "distance" && !shared.myPos) locate();
+      render();
     });
-    $("#radius-select").addEventListener("change", (e) => {
+    q(".radius-select").addEventListener("change", (e) => {
       state.radiusKm = e.target.value;
       state.page = 1;
-      if (state.radiusKm && !state.myPos) locate();
-      renderExplore();
+      if (state.radiusKm && !shared.myPos) locate();
+      render();
     });
-    $("#locate-btn").addEventListener("click", locate);
+    q(".locate-btn").addEventListener("click", locate);
+
+    return {
+      render,
+      setCity(city) {
+        state.city = cities().includes(city) ? city : "All";
+        state.category = "";
+        state.page = 1;
+        render();
+      },
+      setStatus(msg) { q(".locate-status").textContent = msg; },
+      setLocateLabel(label) { q(".locate-btn").textContent = label; }
+    };
   }
 
+  // One shared geolocation for both sections
   function locate() {
-    const status = $("#locate-status");
     if (!navigator.geolocation) {
-      status.textContent = "This device doesn't support location.";
+      explorers.forEach((x) => x.setStatus("This device doesn't support location."));
       return;
     }
-    status.textContent = "Finding you…";
+    explorers.forEach((x) => x.setStatus("Finding you…"));
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        state.myPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        status.textContent = "📍 Location found — distances shown on each place.";
-        $("#locate-btn").textContent = "📍 Update my location";
-        renderExplore();
+        shared.myPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        explorers.forEach((x) => {
+          x.setStatus("📍 Location found — distances shown on each place.");
+          x.setLocateLabel("📍 Update my location");
+          x.render();
+        });
       },
       (err) => {
-        status.textContent = err.code === 1
+        const msg = err.code === 1
           ? "Location permission denied — allow it in your browser to use distances."
           : "Couldn't get your location — try again outside/near a window.";
+        explorers.forEach((x) => x.setStatus(msg));
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
+  }
+
+  // Jump from schedule buttons: filter BOTH sections to the city,
+  // then scroll to Visit (Eat is right below it).
+  function openExplore(city) {
+    explorers.forEach((x) => x.setCity(city));
+    $("#visit").scrollIntoView({ behavior: "smooth" });
   }
 
   /* ---------- info ---------- */
@@ -446,8 +440,11 @@
   renderHero();
   renderTabs();
   renderDay();
-  initExploreControls();
-  renderExplore();
+  document.querySelectorAll(".explore-section").forEach((root) => {
+    const x = createExplorer(root);
+    explorers.push(x);
+    x.render();
+  });
   renderInfo();
   initNav();
 })();

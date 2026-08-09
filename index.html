@@ -30,7 +30,8 @@
 
   <nav class="section-nav" id="section-nav">
     <a href="#schedule" class="active" data-section="schedule">📅 Schedule</a>
-    <a href="#explore" data-section="explore">🧭 Explore</a>
+    <a href="#visit" data-section="visit">🏛️ Visit</a>
+    <a href="#eat" data-section="eat">🍽️ Eat</a>
     <a href="#info" data-section="info">ℹ️ Info</a>
   </nav>
 
@@ -40,43 +41,71 @@
       <div id="day-content"></div>
     </section>
 
-    <section id="explore">
-      <h2 class="section-title"><span>🧭</span> Explore places</h2>
-      <p class="section-lede">Everything worth eating and visiting — filter it down to what you fancy.</p>
+    <section id="visit" class="explore-section" data-kind="visit">
+      <h2 class="section-title"><span>🏛️</span> Places to visit</h2>
+      <p class="section-lede">Museums, parks, views and wanders — filter it down to what you fancy.</p>
 
       <div class="explore-controls">
-        <div class="filter-row" id="city-filters" aria-label="City"></div>
-        <div class="filter-row" id="kind-filters" aria-label="Type"></div>
-
+        <div class="filter-row city-filters" aria-label="City"></div>
         <div class="control-grid">
-          <input type="search" id="search-box" class="control" placeholder="🔍 Search places…" aria-label="Search places">
-          <select id="category-select" class="control" aria-label="Category"></select>
-          <select id="price-select" class="control" aria-label="Price">
-            <option value="">Any price</option>
-            <option value="€">€ cheap</option>
-            <option value="€€">€€ mid</option>
-            <option value="€€€">€€€ fancy</option>
-          </select>
-          <select id="sort-select" class="control" aria-label="Sort">
+          <input type="search" class="control search-box" placeholder="🔍 Search places…" aria-label="Search places to visit">
+          <select class="control category-select" aria-label="Category"></select>
+          <select class="control sort-select" aria-label="Sort">
             <option value="name">Sort: A–Z</option>
-            <option value="price">Sort: price</option>
             <option value="distance">Sort: nearest</option>
           </select>
-          <select id="radius-select" class="control" aria-label="Distance filter">
+          <select class="control radius-select" aria-label="Distance filter">
             <option value="">Any distance</option>
             <option value="0.5">Within 500 m</option>
             <option value="1">Within 1 km</option>
             <option value="2">Within 2 km</option>
             <option value="5">Within 5 km</option>
           </select>
-          <button id="locate-btn" class="control control-btn">📍 Use my location</button>
+          <button class="control control-btn locate-btn">📍 Use my location</button>
         </div>
-        <p class="locate-status" id="locate-status"></p>
+        <p class="locate-status"></p>
       </div>
 
-      <p class="result-count" id="result-count"></p>
-      <div class="card-grid" id="place-grid"></div>
-      <div class="pagination" id="pagination"></div>
+      <p class="result-count"></p>
+      <div class="card-grid place-grid"></div>
+      <div class="pagination"></div>
+    </section>
+
+    <section id="eat" class="explore-section" data-kind="eat">
+      <h2 class="section-title"><span>🍽️</span> Places to eat</h2>
+      <p class="section-lede">From legendary fries to proper dinners — sorted by whatever matters right now.</p>
+
+      <div class="explore-controls">
+        <div class="filter-row city-filters" aria-label="City"></div>
+        <div class="control-grid">
+          <input type="search" class="control search-box" placeholder="🔍 Search places…" aria-label="Search places to eat">
+          <select class="control category-select" aria-label="Category"></select>
+          <select class="control price-select" aria-label="Price">
+            <option value="">Any price</option>
+            <option value="€">€ cheap</option>
+            <option value="€€">€€ mid</option>
+            <option value="€€€">€€€ fancy</option>
+          </select>
+          <select class="control sort-select" aria-label="Sort">
+            <option value="name">Sort: A–Z</option>
+            <option value="price">Sort: price</option>
+            <option value="distance">Sort: nearest</option>
+          </select>
+          <select class="control radius-select" aria-label="Distance filter">
+            <option value="">Any distance</option>
+            <option value="0.5">Within 500 m</option>
+            <option value="1">Within 1 km</option>
+            <option value="2">Within 2 km</option>
+            <option value="5">Within 5 km</option>
+          </select>
+          <button class="control control-btn locate-btn">📍 Use my location</button>
+        </div>
+        <p class="locate-status"></p>
+      </div>
+
+      <p class="result-count"></p>
+      <div class="card-grid place-grid"></div>
+      <div class="pagination"></div>
     </section>
 
     <section id="info">

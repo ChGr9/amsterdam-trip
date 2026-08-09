@@ -411,7 +411,8 @@ section { margin-bottom: 56px; scroll-margin-top: 70px; }
 }
 
 @media (min-width: 620px) {
-  .control-grid { grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto; }
+  .control-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .control-grid .search-box { grid-column: span 2; }
 }
 
 .control {

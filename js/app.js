@@ -41,7 +41,7 @@
     return a;
   }
 
-  function actionButtons(item) {
+  function actionButtons(item, withGoogle) {
     const wrap = el("div", "tl-actions");
     if (item.tickets) wrap.appendChild(link("btn btn-ticket", item.tickets, "🎟️ Tickets"));
     if (item.location) {
@@ -49,6 +49,12 @@
       wrap.appendChild(link("btn btn-waze", wazeUrl(item.location), "🚗 Waze"));
     }
     if (item.url) wrap.appendChild(link("btn btn-site", item.url, "🌐 Website"));
+    // Places without their own website get a Google search instead
+    // (reviews, photos, live opening hours).
+    if (withGoogle && !item.url) {
+      const q = encodeURIComponent(item.name + " " + item.city);
+      wrap.appendChild(link("btn btn-site", "https://www.google.com/search?q=" + q, "🔍 Google"));
+    }
     return wrap.childElementCount ? wrap : null;
   }
 
@@ -253,6 +259,16 @@
 
     function placeCard(p) {
       const card = el("div", "idea-card");
+
+      if (p.img) {
+        const im = el("img", "place-img");
+        im.src = p.img;
+        im.alt = p.name;
+        im.loading = "lazy";
+        im.onerror = () => im.remove();
+        card.appendChild(im);
+      }
+
       const head = el("div", "idea-head");
       head.appendChild(el("h4", null, esc(p.name)));
       const metaBits = [];
@@ -270,9 +286,10 @@
       }
       card.appendChild(tags);
 
+      if (p.hours) card.appendChild(el("p", "hours-line", "🕐 " + esc(p.hours)));
       if (p.desc) card.appendChild(el("p", null, esc(p.desc)));
 
-      const actions = actionButtons(p);
+      const actions = actionButtons(p, true);
       if (actions) card.appendChild(actions);
       return card;
     }

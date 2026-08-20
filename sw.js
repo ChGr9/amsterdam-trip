@@ -1,7 +1,7 @@
 /* Service worker: makes the site work offline.
    Bump CACHE_VERSION whenever any file changes so clients pick it up. */
 
-const CACHE_VERSION = "v4";
+const CACHE_VERSION = "v5";
 const CACHE_NAME = "trip-" + CACHE_VERSION;
 
 const APP_SHELL = [
